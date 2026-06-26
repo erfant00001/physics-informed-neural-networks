@@ -1,10 +1,37 @@
 # Physics-Informed Neural Networks (PINNs)
 
-Forward **Physics-Informed Neural Network** projects for classic PDEs — Burgers', heat/diffusion, and Navier–Stokes flow (including particle tracing). Implemented in **PyTorch** (from scratch) and **[DeepXDE](https://deepxde.readthedocs.io/)**.
+Forward **Physics-Informed Neural Network** projects for classic PDEs — Burgers', heat/diffusion, and incompressible Navier–Stokes flow (including particle tracing). Implemented in **PyTorch** (from scratch) and **[DeepXDE](https://deepxde.readthedocs.io/)**.
 
-A PINN trains a neural network to satisfy a PDE by adding the PDE residual, boundary, and initial conditions directly into the loss function — so the governing physics is enforced during training instead of being learned purely from data.
+<p align="center">
+  <img src="assets/yshape_streamlines.png" width="70%" alt="u-velocity and streamlines in a Y-shaped channel"><br>
+  <em>PINN solution of Navier–Stokes flow through a Y-shaped channel (velocity magnitude + streamlines).</em>
+</p>
 
 ---
+
+## How a PINN works
+
+A neural network $u_\theta(x,t)$ is trained so that it satisfies the PDE *and* its initial/boundary conditions. The PDE is turned into a residual using automatic differentiation, and the network is optimized to drive that residual to zero:
+
+$$\mathcal{L}(\theta) = \mathcal{L}_{\text{PDE}} + \mathcal{L}_{\text{BC}} + \mathcal{L}_{\text{IC}} + \mathcal{L}_{\text{data}}$$
+
+For example, the Burgers' residual minimized at a set of collocation points is
+
+$$r_\theta(x,t) = \frac{\partial u_\theta}{\partial t} + u_\theta\frac{\partial u_\theta}{\partial x} - \nu\frac{\partial^2 u_\theta}{\partial x^2}.$$
+
+## Governing equations
+
+**Burgers' equation (1D/2D)**
+
+$$u_t + u\,u_x = \nu\,u_{xx}$$
+
+**Heat / diffusion equation**
+
+$$u_t = \alpha\,u_{xx} \qquad\text{(1D)}\qquad\qquad u_t = \alpha\,(u_{xx} + u_{yy}) \qquad\text{(2D)}$$
+
+**Incompressible Navier–Stokes (2D)**
+
+$$\nabla\cdot\mathbf{u} = 0, \qquad \mathbf{u}_t + (\mathbf{u}\cdot\nabla)\,\mathbf{u} = -\frac{1}{\rho}\nabla p + \nu\,\nabla^2\mathbf{u}$$
 
 ## Projects
 
@@ -22,13 +49,18 @@ A PINN trains a neural network to satisfy a PDE by adding the PDE residual, boun
 | [`NS_particle.ipynb`](NS_particle.ipynb) | Particle-tracing helper / snippet | DeepXDE |
 | [`Erfan_PyTorch4.ipynb`](Erfan_PyTorch4.ipynb) | PyTorch & autograd warm-up | PyTorch |
 
-> `*.dat` files (e.g. `loss.dat`, `train.dat`, `test.dat`) are training/evaluation logs produced by the DeepXDE notebooks.
+## Results
+
+| | |
+|:---:|:---:|
+| <img src="assets/ns_streamlines.png" width="100%"><br><em>Navier–Stokes: u-velocity with streamlines</em> | <img src="assets/heat2d_solution.png" width="78%"><br><em>2D heat equation solution</em> |
+| <img src="assets/yshape_streamlines.png" width="100%"><br><em>Y-channel velocity field + streamlines</em> | <img src="assets/yshape_particle_tracing.png" width="100%"><br><em>Particle tracing through the Y-channel</em> |
+
+> `*.dat` files (`loss.dat`, `train.dat`, `test.dat`) are training/evaluation logs produced by the DeepXDE notebooks.
 
 ## Tech stack
 
-- Python 3.9+
-- [PyTorch](https://pytorch.org/), [DeepXDE](https://deepxde.readthedocs.io/)
-- NumPy, SciPy, Matplotlib
+Python 3.9+ · [PyTorch](https://pytorch.org/) · [DeepXDE](https://deepxde.readthedocs.io/) · NumPy · SciPy · Matplotlib
 
 ## Getting started
 
